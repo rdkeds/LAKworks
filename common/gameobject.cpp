@@ -1,7 +1,7 @@
 #include "gameobject.h"
 
 Gameobject::Gameobject(std::string object_file,std::string texture_file){
-
+  //testing some stuff
   Texture textureClass;
 
   // Load the texture (see: texture.h/cpp)
