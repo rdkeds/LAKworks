@@ -77,7 +77,7 @@ int Renderer::init(){
 	textureID  = glGetUniformLocation(programID, "myTextureSampler");
 
   // Get a handle for our "LightPosition" uniform
-	LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+	//LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
   //ProjectionMatrix = glm::ortho(0.0f, (float)window_width, (float)window_height, 0.0f, 0.1f, 100.0f);
   ProjectionMatrix = glm::perspective(100.0f, 4.0f / 3.0f, 0.1f, 1000.0f);
@@ -178,8 +178,8 @@ void Renderer::renderObject(Gameobject* gameobject){
   glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
   glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
-  glm::vec3 lightPos = glm::vec3(4,4,4);
-  glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+  /*glm::vec3 lightPos = glm::vec3(4,4,4);
+  glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);*/
 
   // Bind our texture in Texture Unit 0
   glActiveTexture(GL_TEXTURE0);
