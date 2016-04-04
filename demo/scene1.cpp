@@ -4,23 +4,24 @@ Scene1::Scene1(){
 
   gameobject = new Gameobject("assets/boompje.obj", "assets/boompje.bmp");
 
-  gameobject->position(glm::vec3(0.0f, 0.0f, 0.0f));
-	gameobject->scale(glm::vec3(1.0f, 1.0f, 1.0f));
-	gameobject->rotX(0.0f);
-	gameobject->rotY(0.0f);
-	gameobject->rotZ(0.0f);
-
   _objectsInScene.push_back(gameobject);
 
-  light = new Light();
+  gameobject2 = new Gameobject("assets/boompje.obj", "assets/boompje.bmp");
 
-  _lightsInScene.push_back(light);
+  _objectsInScene.push_back(gameobject2);
+
+  gameobject->position(glm::vec3(-1.5f, 0.0f, 0.0f));
+  gameobject2->position(glm::vec3(1.5f, 0.0f, 0.0f));
+
+  gameobject->addChild(gameobject2);
 
 }
 
 void Scene1::Update(){
 
-  gameobject->rotX(gameobject->rotX() + 0.01f);
+  //gameobject->position(gameobject->position() + glm::vec3(-0.01f, 0.0f, 0.0f));
+
+  //gameobject->rotX(gameobject->rotX() + 0.01f);
   gameobject->rotY(gameobject->rotY() + 0.01f);
 
 }
@@ -28,6 +29,5 @@ void Scene1::Update(){
 Scene1::~Scene1(){
 
   delete gameobject;
-  delete light;
 
 }

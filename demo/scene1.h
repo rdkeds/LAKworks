@@ -14,7 +14,7 @@ class Scene1 : public Scene
     private:
 
       Gameobject* gameobject;
-      Light* light;
+      Gameobject* gameobject2;
 
 };
 

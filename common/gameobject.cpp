@@ -1,6 +1,22 @@
 #include "gameobject.h"
+#include <iostream>
+#include <string>
 
 Gameobject::Gameobject(std::string object_file,std::string texture_file){
+
+  _parent = NULL;
+
+  this->position(glm::vec3(0.0f, 0.0f, 0.0f));
+	this->scale(glm::vec3(1.0f, 1.0f, 1.0f));
+	this->rotX(0.0f);
+	this->rotY(0.0f);
+	this->rotZ(0.0f);
+
+  this->localPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	this->localScale(glm::vec3(0.0f, 0.0f, 0.0f));
+	this->localRotX(0.0f);
+	this->localRotY(0.0f);
+	this->localRotZ(0.0f);
 
   Texture textureClass;
 
@@ -29,6 +45,56 @@ Gameobject::Gameobject(std::string object_file,std::string texture_file){
   glGenBuffers(1, &_normalbuffer);
   glBindBuffer(GL_ARRAY_BUFFER, _normalbuffer);
   glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
+}
+
+void Gameobject::setParent(Gameobject* newParent){
+
+  if(_parent != NULL){
+
+    _parent->removeChild(this);
+
+  }
+
+  _parent = newParent;
+
+  this->localPosition(this->position() - _parent->position());
+	this->localScale((this->scale() - glm::vec3(1.0f, 1.0f, 1.0f)));
+	this->localRotX(this->rotX());
+  this->localRotY(this->rotY());
+  this->localRotZ(this->rotZ());
+
+}
+
+void Gameobject::addChild(Gameobject* newChild){
+
+  newChild->setParent(this);
+
+  _children.push_back(newChild);
+
+}
+
+void Gameobject::unChild(){
+
+  if(_parent != NULL){
+
+    this->position(_parent->position() + this->localPosition());
+  	this->scale(_parent->scale() + this->localScale());
+  	this->rotX(_parent->rotX() + this->localRotX());
+  	this->rotY(_parent->rotY() + this->localRotY());
+  	this->rotZ(_parent->rotZ() + this->localRotZ());
+
+    _parent->removeChild(this);
+
+  }
+
+  _parent = NULL;
+
+}
+
+void Gameobject::removeChild(Gameobject* oldChild){
+
+  _children.erase(std::remove(_children.begin(), _children.end(), oldChild), _children.end());
 
 }
 

@@ -6,8 +6,8 @@ Renderer::Renderer(){
   window_width = 1280;
   window_height = 720;
 
-  fragment_shader	= "shaders/sprite.frag";
-  vertex_shader	= "shaders/sprite.vert";
+  fragment_shader	= "shaders/sprite_2.frag";
+  vertex_shader	= "shaders/sprite_2.vert";
 
   this->init();
 }
@@ -164,11 +164,22 @@ void Renderer::renderObject(Gameobject* gameobject){
   glUseProgram(programID);
 
   // Build the Model matrix
-  glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), gameobject->position());
-  glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(gameobject->rotY(), gameobject->rotX(), gameobject->rotZ());
-  glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->scale());
+  if(gameobject->Parent() == NULL){
+    glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), gameobject->position());
+    glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(gameobject->rotY(), gameobject->rotX(), gameobject->rotZ());
+    glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->scale());
 
-  ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+    ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+  } else {
+    glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), gameobject->Parent()->position() + gameobject->localPosition());
+    float tempRotY = 0;
+    float tempRotX = 0;
+    float tempRotZ = 0;
+    glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(gameobject->Parent()->rotY() + gameobject->localRotY(), gameobject->Parent()->rotX() + gameobject->localRotX(), gameobject->Parent()->rotZ() + gameobject->localRotZ());
+    glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->Parent()->scale() + gameobject->localScale());
+
+    ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+  }
 
   glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
 

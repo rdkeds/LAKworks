@@ -33,17 +33,39 @@ class Gameobject{
     float tricount() { return _tricount; };
 
     glm::vec3 position() { return _position; };
-    glm::vec3 position(glm::vec3 newPos) { _position = newPos; };
+    void position(glm::vec3 newPos) { _position = newPos; };
 
     glm::vec3 scale() { return _scale; };
-    glm::vec3 scale(glm::vec3 newScl) { _scale = newScl; };
+    void scale(glm::vec3 newScl) { _scale = newScl; };
 
     float rotX() { return _rotX; };
-    float rotX(float newX) { _rotX = newX; };
+    void rotX(float newX) { _rotX = newX; };
     float rotY() { return _rotY; };
-    float rotY(float newY) { _rotY = newY; };
+    void rotY(float newY) { _rotY = newY; };
     float rotZ() { return _rotZ; };
-    float rotZ(float newZ) { _rotZ = newZ; };
+    void rotZ(float newZ) { _rotZ = newZ; };
+
+    glm::vec3 localPosition() { return _localPosition; };
+    void localPosition(glm::vec3 newPos) { _localPosition = newPos; };
+
+    glm::vec3 localScale() { return _localScale; };
+    void localScale(glm::vec3 newScl) { _localScale = newScl; };
+
+    float localRotX() { return _localRotX; };
+    void localRotX(float newX) { _localRotX = newX; };
+    float localRotY() { return _localRotY; };
+    void localRotY(float newY) { _localRotY = newY; };
+    float localRotZ() { return _localRotZ; };
+    void localRotZ(float newZ) { _localRotZ = newZ; };
+
+    std::vector <Gameobject*> Children() { return _children; };
+    Gameobject* Parent() {return _parent; };
+
+    void setParent(Gameobject* newParent);
+    void addChild(Gameobject* newChild);
+    void unChild();
+    void removeChild(Gameobject* oldChild);
+
 
 	private:
 		GLuint _texture;
@@ -58,6 +80,15 @@ class Gameobject{
     float _rotX;
     float _rotY;
     float _rotZ;
+
+    glm::vec3 _localPosition;
+    glm::vec3 _localScale;
+    float _localRotX;
+    float _localRotY;
+    float _localRotZ;
+
+    std::vector <Gameobject*> _children;
+    Gameobject* _parent;
 
 };
 
