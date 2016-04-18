@@ -1,4 +1,9 @@
 #include <common/renderer.h>
+#include <iostream>
+#include <string>
+
+#include <cstdlib>
+#include <cmath>
 
 Renderer::Renderer(){
   Camera cam;
@@ -150,6 +155,32 @@ void Renderer::renderSprite(Sprite* sprite){
   glDisableVertexAttribArray(vertexUVID);
 }
 
+glm::mat4 Renderer::GetParentMatrix(Gameobject* gameobject){
+
+  glm::mat4 ParentModelMatrix = glm::mat4(1.0f);
+
+  glm::mat4 parentTranslationMatrix = glm::translate(glm::mat4(1.0f), gameobject->position());
+  glm::mat4 parentRotationMatrix	= glm::eulerAngleYXZ(gameobject->rotY(), gameobject->rotX(), gameobject->rotZ());
+  glm::mat4 parentScalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->scale());
+
+  if(gameobject->Parent() != NULL){
+
+    glm::mat4 PriorityParentModelMatrix = glm::mat4(1.0f);
+    PriorityParentModelMatrix = GetParentMatrix(gameobject->Parent());
+
+    ParentModelMatrix = parentTranslationMatrix * parentRotationMatrix * parentScalingMatrix;
+    ParentModelMatrix = PriorityParentModelMatrix * ParentModelMatrix;
+
+  } else {
+
+    ParentModelMatrix = parentTranslationMatrix * parentRotationMatrix * parentScalingMatrix;
+
+  }
+
+  return ParentModelMatrix;
+
+}
+
 void Renderer::renderObject(Gameobject* gameobject){
   // Compute the ViewMatrix from keyboard and mouse input (see: camera.h/cpp)
   cam.computeMatricesFromInputs(_window);
@@ -160,8 +191,13 @@ void Renderer::renderObject(Gameobject* gameobject){
   glm::mat4 ViewMatrix = cam.getViewMatrix(); // get from Camera (Camera position and direction)
   glm::mat4 ModelMatrix = glm::mat4(1.0f);
 
+  glm::mat4 ParentModelMatrix = glm::mat4(1.0f);
+
   // Use our shader
   glUseProgram(programID);
+
+
+  glm::mat4 MVP;
 
   // Build the Model matrix
   if(gameobject->Parent() == NULL){
@@ -170,18 +206,22 @@ void Renderer::renderObject(Gameobject* gameobject){
     glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->scale());
 
     ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+
+    MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
   } else {
-    glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), gameobject->Parent()->position() + gameobject->localPosition());
-    float tempRotY = 0;
-    float tempRotX = 0;
-    float tempRotZ = 0;
-    glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(gameobject->Parent()->rotY() + gameobject->localRotY(), gameobject->Parent()->rotX() + gameobject->localRotX(), gameobject->Parent()->rotZ() + gameobject->localRotZ());
-    glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->Parent()->scale() + gameobject->localScale());
+
+    ParentModelMatrix = GetParentMatrix(gameobject->Parent());
+
+    glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), gameobject->position());
+    glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(gameobject->rotY(), gameobject->rotX(), gameobject->rotZ());
+    glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), gameobject->scale());
 
     ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
+
+    MVP = ProjectionMatrix * ViewMatrix * ParentModelMatrix * ModelMatrix;
   }
 
-  glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+
 
   // Send our transformation to the currently bound shader,
   // in the "MVP" uniform

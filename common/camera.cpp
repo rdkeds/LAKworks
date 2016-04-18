@@ -3,7 +3,7 @@
 Camera::Camera(){
 
 	// Initial position : on +Z
-	position = glm::vec3( 0, 0, 10 );
+	position = glm::vec3( 0, 0, 20 );
 	cursor = glm::vec3( 0, 0, 0 );
 
 	speed = 1.0f; // 5 units / second

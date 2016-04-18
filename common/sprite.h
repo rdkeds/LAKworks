@@ -29,17 +29,17 @@ class Sprite{
 		GLuint uvbuffer() { return _uvbuffer; };
 
     glm::vec3 position() { return _position; };
-    glm::vec3 position(glm::vec3 newPos) { _position = newPos; };
+    void position(glm::vec3 newPos) { _position = newPos; };
 
     glm::vec3 scale() { return _scale; };
-    glm::vec3 scale(glm::vec3 newScl) { _scale = newScl; };
+    void scale(glm::vec3 newScl) { _scale = newScl; };
 
     float rotX() { return _rotX; };
-    float rotX(float newX) { _rotX = newX; };
+    void rotX(float newX) { _rotX = newX; };
     float rotY() { return _rotY; };
-    float rotY(float newY) { _rotY = newY; };
+    void rotY(float newY) { _rotY = newY; };
     float rotZ() { return _rotZ; };
-    float rotZ(float newZ) { _rotZ = newZ; };
+    void rotZ(float newZ) { _rotZ = newZ; };
 
 	private:
 		GLuint _texture;

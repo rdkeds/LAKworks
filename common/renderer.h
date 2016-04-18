@@ -56,6 +56,8 @@ class Renderer {
     GLuint LightID;
 
     glm::mat4 ProjectionMatrix;
+
+    glm::mat4 GetParentMatrix(Gameobject* gameobject);
 };
 
 #endif

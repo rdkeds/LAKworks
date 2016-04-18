@@ -15,6 +15,7 @@ class Scene1 : public Scene
 
       Gameobject* gameobject;
       Gameobject* gameobject2;
+      Gameobject* gameobject3;
 
 };
 
