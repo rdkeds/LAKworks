@@ -9,12 +9,30 @@ class Scene2 : public Scene
         Scene2();
         ~Scene2();
 
-        void Update();
+        void Update(GLFWwindow* window);
 
     private:
 
-      Gameobject* gameobject;
-      Gameobject* gameobject2;
+      Gameobject* playerController;
+
+      Gameobject* cockpitWalls;
+      Gameobject* cockpitChair1;
+      Gameobject* cockpitChair2;
+      Gameobject* cockpitChair3;
+      Gameobject* cockpitTerminal;
+      Gameobject* cockpitScreen1;
+      Gameobject* cockpitScreen2;
+      Gameobject* cockpitScreen3;
+      Gameobject* cockpitSteer1;
+      Gameobject* cockpitSteer2;
+      Gameobject* cockpitMapBase;
+      Gameobject* cockpitHoloCone;
+      Gameobject* cockpitHoloSphere1;
+      Gameobject* cockpitHoloSphere2;
+      Gameobject* cockpitHoloSphere3;
+      Gameobject* cockpitHoloSphere4;
+      Gameobject* cockpitHoloSphere5;
+      Gameobject* cockpitFloor;
 
 };
 

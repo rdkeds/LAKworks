@@ -59,6 +59,7 @@ add_executable(demo
 	common/texture.cpp
 	common/renderer.cpp
 	common/sprite.cpp
+	common/collider.cpp
 	common/gameobject.cpp
 	common/objloader.cpp
 	common/light.cpp

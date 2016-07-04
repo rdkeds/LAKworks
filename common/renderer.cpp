@@ -6,7 +6,6 @@
 #include <cmath>
 
 Renderer::Renderer(){
-  Camera cam;
 
   window_width = 1280;
   window_height = 720;
@@ -85,74 +84,10 @@ int Renderer::init(){
 	//LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
 
   //ProjectionMatrix = glm::ortho(0.0f, (float)window_width, (float)window_height, 0.0f, 0.1f, 100.0f);
-  ProjectionMatrix = glm::perspective(100.0f, 4.0f / 3.0f, 0.1f, 1000.0f);
+  //ProjectionMatrix = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+  //ProjectionMatrix = glm::perspective(100.0f, 4.0f / 3.0f, 0.1f, 1000.0f);
 
   return 0;
-}
-
-void Renderer::renderSprite(Sprite* sprite){
-  // Compute the ViewMatrix from keyboard and mouse input (see: camera.h/cpp)
-  cam.computeMatricesFromInputs(_window);
-
-  glm::vec3 cursor = cam.getCursor();
-  //printf("(%f,%f)\n",cursor.x, cursor.y);
-
-  glm::mat4 ViewMatrix = cam.getViewMatrix(); // get from Camera (Camera position and direction)
-  glm::mat4 ModelMatrix = glm::mat4(1.0f);
-
-  // Use our shader
-  glUseProgram(programID);
-
-  // Build the Model matrix
-  glm::mat4 translationMatrix	= glm::translate(glm::mat4(1.0f), sprite->position());
-  glm::mat4 rotationMatrix	= glm::eulerAngleYXZ(sprite->rotY(), sprite->rotX(), sprite->rotZ());
-  glm::mat4 scalingMatrix		= glm::scale(glm::mat4(1.0f), sprite->scale());
-
-  ModelMatrix = translationMatrix * rotationMatrix * scalingMatrix;
-
-  glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-
-  // Send our transformation to the currently bound shader,
-  // in the "MVP" uniform
-  glUniformMatrix4fv(matrixID, 1, GL_FALSE, &MVP[0][0]);
-
-  // Bind our texture in Texture Unit 0
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, sprite->texture());
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // Set our "myTextureSampler" sampler to user Texture Unit 0
-  glUniform1i(textureID, 0);
-
-  // 1st attribute buffer : vertices
-  glEnableVertexAttribArray(vertexPosition_modelspaceID);
-  glBindBuffer(GL_ARRAY_BUFFER, sprite->vertexbuffer());
-  glVertexAttribPointer(
-    vertexPosition_modelspaceID,  // The attribute we want to configure
-    3,                            // size : x+y+z => 3
-    GL_FLOAT,                     // type
-    GL_FALSE,                     // normalized?
-    0,                            // stride
-    (void*)0                      // array buffer offset
-  );
-
-  // 2nd attribute buffer : UVs
-  glEnableVertexAttribArray(vertexUVID);
-  glBindBuffer(GL_ARRAY_BUFFER, sprite->uvbuffer());
-  glVertexAttribPointer(
-    vertexUVID,                   // The attribute we want to configure
-    2,                            // size : U+V => 2
-    GL_FLOAT,                     // type
-    GL_FALSE,                     // normalized?
-    0,                            // stride
-    (void*)0                      // array buffer offset
-  );
-
-  // Draw the triangles !
-  glDrawArrays(GL_TRIANGLES, 0, 2*3); // 2*3 indices starting at 0 -> 2 triangles
-
-  glDisableVertexAttribArray(vertexPosition_modelspaceID);
-  glDisableVertexAttribArray(vertexUVID);
 }
 
 glm::mat4 Renderer::GetParentMatrix(Gameobject* gameobject){
@@ -181,14 +116,24 @@ glm::mat4 Renderer::GetParentMatrix(Gameobject* gameobject){
 
 }
 
-void Renderer::renderObject(Gameobject* gameobject){
+void Renderer::renderObject(Gameobject* gameobject, Camera* cam){
   // Compute the ViewMatrix from keyboard and mouse input (see: camera.h/cpp)
-  cam.computeMatricesFromInputs(_window);
 
-  glm::vec3 cursor = cam.getCursor();
+  if(cam->parent() == NULL){
+
+    cam->computeMatricesFromInputs(_window);
+
+  } else {
+
+    cam->computeMatricesFromInputs(_window, cam->parent()->position());
+
+  }
+
+  glm::vec3 cursor = cam->getCursor();
   //printf("(%f,%f)\n",cursor.x, cursor.y);
 
-  glm::mat4 ViewMatrix = cam.getViewMatrix(); // get from Camera (Camera position and direction)
+  glm::mat4 ProjectionMatrix = cam->getProjectionMatrix(); // get from Camera (Camera position and direction)
+  glm::mat4 ViewMatrix = cam->getViewMatrix(); // get from Camera (Camera position and direction)
   glm::mat4 ModelMatrix = glm::mat4(1.0f);
 
   glm::mat4 ParentModelMatrix = glm::mat4(1.0f);
@@ -286,14 +231,15 @@ void Renderer::renderObject(Gameobject* gameobject){
 
 void Renderer::renderScene(Scene* scene){
 
-  scene->Update();
+  scene->Update(_window);
 
   std::vector<Gameobject*> objectsInRenderedScene;
   objectsInRenderedScene = scene->ObjectsInScene();
 
   for(int i = 0; i < objectsInRenderedScene.size(); i++){
 
-    renderObject(objectsInRenderedScene[i]);
+    renderObject(objectsInRenderedScene[i], scene->cam());
+    objectsInRenderedScene[i]->checkCollisions(objectsInRenderedScene);
 
   }
 

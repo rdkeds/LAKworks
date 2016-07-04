@@ -19,6 +19,7 @@
 
 #include <common/objloader.hpp>
 #include <common/texture.h>
+#include <common/collider.h>
 
 class Gameobject{
   public:
@@ -34,6 +35,10 @@ class Gameobject{
 
     glm::vec3 position() { return _position; };
     void position(glm::vec3 newPos) { _position = newPos; };
+
+    float posX(){return _position.x; };
+    float posY(){return _position.y; };
+    float posZ(){return _position.z; };
 
     glm::vec3 scale() { return _scale; };
     void scale(glm::vec3 newScl) { _scale = newScl; };
@@ -66,6 +71,12 @@ class Gameobject{
     void unChild();
     void removeChild(Gameobject* oldChild);
 
+    void addCollider(int type);
+    std::vector <Collider*> colliders() { return _colliders; };
+
+    void checkCollisions(std::vector <Gameobject*> otherObjectsInScene);
+
+    bool colliding() {return _colliding; };
 
 	private:
 		GLuint _texture;
@@ -89,6 +100,15 @@ class Gameobject{
 
     std::vector <Gameobject*> _children;
     Gameobject* _parent;
+
+    std::vector <Collider*> _colliders;
+    //Collider* col;
+
+    bool checkSquareCol(Gameobject* squareCol, Gameobject* sphereCol, int l, int k);
+
+    void onCollision();
+
+    bool _colliding;
 
 };
 

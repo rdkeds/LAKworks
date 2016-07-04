@@ -17,26 +17,24 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+#include <common/camera.h>
 #include <common/shader.h>
 #include <common/scene.h>
 #include <common/sprite.h>
 #include <common/gameobject.h>
 #include <common/texture.h>
-#include <common/camera.h>
+
 
 class Renderer {
   public:
     Renderer();
 		virtual ~Renderer();
 
-    void renderSprite(Sprite* sprite);
-    void renderObject(Gameobject* gameobject);
+    void renderObject(Gameobject* gameobject, Camera* camRef);
     void renderScene(Scene* scene);
 		GLFWwindow* window() { return _window; };
   private:
     int init();
-
-    Camera cam;
 
     GLFWwindow* _window;
 		int window_width;
@@ -55,7 +53,7 @@ class Renderer {
 		GLuint textureID;
     GLuint LightID;
 
-    glm::mat4 ProjectionMatrix;
+    //glm::mat4 ProjectionMatrix;
 
     glm::mat4 GetParentMatrix(Gameobject* gameobject);
 };

@@ -9,13 +9,12 @@ class Scene1 : public Scene
         Scene1();
         ~Scene1();
 
-        void Update();
+        void Update(GLFWwindow* window);
 
     private:
 
       Gameobject* gameobject;
       Gameobject* gameobject2;
-      Gameobject* gameobject3;
 
 };
 
