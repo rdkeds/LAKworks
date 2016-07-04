@@ -19,7 +19,6 @@
 
 #include <common/camera.h>
 #include <common/gameobject.h>
-#include <common/light.h>
 
 class Scene{
   public:
@@ -29,10 +28,8 @@ class Scene{
     virtual void Update(GLFWwindow* window);
 
     std::vector <Gameobject*> ObjectsInScene() { return _objectsInScene; };
-    std::vector <Light*> LightsInScene() { return _lightsInScene; };
 
     std::vector <Gameobject*> _objectsInScene;
-    std::vector <Light*> _lightsInScene;
 
     Camera* cam() {return &_cam; };
 

@@ -62,7 +62,6 @@ add_executable(demo
 	common/collider.cpp
 	common/gameobject.cpp
 	common/objloader.cpp
-	common/light.cpp
 	common/scene.cpp
 )
 target_link_libraries(demo
