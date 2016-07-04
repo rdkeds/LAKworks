@@ -20,7 +20,6 @@
 #include <common/camera.h>
 #include <common/shader.h>
 #include <common/scene.h>
-#include <common/sprite.h>
 #include <common/gameobject.h>
 #include <common/texture.h>
 
